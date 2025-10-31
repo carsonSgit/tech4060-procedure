@@ -1,0 +1,74 @@
+# DIAGRAM 1: Local Development Setup Architecture
+# Use this as a template to create in Figma
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│                    DEVELOPER'S WINDOWS MACHINE                           │
+│                                                                          │
+│  ┌──────────────────┐              ┌──────────────────────────────┐    │
+│  │   TERRAFORM      │              │      DOCKER DESKTOP          │    │
+│  │   IaC Files      │──manages────▶│      Container Runtime       │    │
+│  │                  │              │                              │    │
+│  │  • main.tf       │              │  ┌────────────────────────┐  │    │
+│  │  • variables.tf  │              │  │   PostgreSQL :5432     │  │    │
+│  │  • outputs.tf    │              │  │   Database: dev_db     │  │    │
+│  └──────────────────┘              │  └──────┬─────────────────┘  │    │
+│                                    │         │ metrics             │    │
+│  ┌──────────────────┐              │  ┌──────▼─────────────────┐  │    │
+│  │  YOUR APP        │──connects───▶│  │  Postgres Exporter     │  │    │
+│  │  localhost:5432  │              │  │  :9187                 │  │    │
+│  └──────────────────┘              │  └──────┬─────────────────┘  │    │
+│                                    │         │ scrapes             │    │
+│  ┌──────────────────┐              │  ┌──────▼─────────────────┐  │    │
+│  │  MONITORING      │              │  │  Prometheus :9090      │  │    │
+│  │                  │              │  │  Metrics Storage       │  │    │
+│  │  Browser:        │              │  └──────┬─────────────────┘  │    │
+│  │  localhost:3000  │──views──────▶│         │ queries             │    │
+│  └──────────────────┘              │  ┌──────▼─────────────────┐  │    │
+│                                    │  │  Grafana :3000         │  │    │
+│  ┌──────────────────┐              │  │  Dashboards & Alerts   │  │    │
+│  │  Local Storage   │◀─persists────│  └────────────────────────┘  │    │
+│  │                  │              │                              │    │
+│  │  postgres_data/  │              │  All containers managed      │    │
+│  │  prometheus_data/│              │  by Terraform!              │    │
+│  │  grafana_data/   │              │                              │    │
+│  └──────────────────┘              └──────────────────────────────┘    │
+│                                                                          │
+│         🚀 Complete Observability Stack with Infrastructure as Code 🚀  │
+└──────────────────────────────────────────────────────────────────────────┘
+
+KEY ELEMENTS TO SHOW IN FIGMA:
+==============================
+1. Outer box = Windows machine boundary
+2. Terraform section (TOP LEFT) - blue color scheme
+   - Show the three .tf files as documents
+   - Arrow pointing to Docker with "manages" label
+3. Docker Desktop section (RIGHT) - cyan/blue color scheme
+   - Stack of 4 containers vertically:
+     a) PostgreSQL :5432 (top)
+     b) Postgres Exporter :9187
+     c) Prometheus :9090
+     d) Grafana :3000 (bottom)
+   - Clear port labels on each
+4. Your Application box (MIDDLE LEFT) - green color scheme
+   - Connects to PostgreSQL port 5432
+5. Browser/Monitoring box (BOTTOM LEFT) - purple color scheme
+   - Shows "localhost:3000" - views Grafana
+6. Data persistence (BOTTOM) - orange color scheme
+   - Three folders: postgres_data/, prometheus_data/, grafana_data/
+   - Label: "Data persists across restarts"
+
+ARROWS & DATA FLOW:
+- Terraform → Docker: "manages all containers"
+- Application → PostgreSQL: "database queries"
+- PostgreSQL → Exporter: "exposes metrics"
+- Exporter → Prometheus: "scrapes metrics every 15s"
+- Prometheus → Grafana: "queries for visualization"
+- Browser → Grafana: "views dashboards"
+- All containers ↔ Local Storage: "persistent data"
+
+COLOR CODING:
+- Blue: Infrastructure/Config (Terraform)
+- Cyan: Runtime (Docker containers)
+- Green: Application layer
+- Purple: Monitoring UI
+- Orange: Persistent storage

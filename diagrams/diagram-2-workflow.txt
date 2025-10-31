@@ -1,0 +1,99 @@
+# DIAGRAM 2: Terraform Workflow for Local Development
+# Use this as a template to create in Figma
+
+START
+  │
+  ▼
+┌────────────────────┐
+│  terraform init    │
+│                    │
+│  Downloads Docker  │
+│  provider plugin   │
+└──────┬─────────────┘
+       │
+       ▼
+┌────────────────────┐
+│  terraform plan    │
+│                    │
+│  Preview changes:  │
+│  • docker_image    │
+│  • docker_container│
+└──────┬─────────────┘
+       │
+       ▼
+    ┌─────┐
+    │ ❓  │  Review Plan
+    │     │  Looks good?
+    └──┬──┘
+       │
+   Yes │         No
+       │          │
+       ▼          └─────────┐
+┌────────────────────┐       │
+│  terraform apply   │       │
+│                    │       │
+│  Type: yes         │       │
+│                    │       ▼
+│  • Pulls image     │  ┌────────────┐
+│  • Creates         │  │  Fix code  │
+│    container       │  │            │
+│  • Starts database │  │  Edit .tf  │
+└──────┬─────────────┘  │  files     │
+       │                └─────┬──────┘
+       ▼                      │
+┌────────────────────┐        │
+│  ✅ SUCCESS!       │        │
+│                    │        │
+│  Database Running  │        │
+│  localhost:5432    │        │
+│                    │◀───────┘
+│  Ready to connect! │
+└────────────────────┘
+       │
+       ▼
+┌────────────────────┐
+│  Verify & Test     │
+│                    │
+│  • docker ps       │
+│  • docker logs     │
+│  • docker exec     │
+└────────────────────┘
+       │
+       ▼
+┌────────────────────┐
+│  When finished:    │
+│  terraform destroy │
+│                    │
+│  Removes all       │
+│  resources         │
+└────────────────────┘
+       │
+       ▼
+      END
+
+KEY ELEMENTS TO SHOW IN FIGMA:
+==============================
+1. Flow from top to bottom
+2. Each box is a distinct step
+3. Decision diamond for "Review Plan"
+   - YES path (green) continues forward
+   - NO path (red) loops back to "Fix code"
+4. Color coding:
+   - Steps 1-3: Blue (planning phase)
+   - Decision: Yellow (review)
+   - Apply: Green (execution)
+   - Success: Green with checkmark
+   - Verify: Purple (testing)
+   - Destroy: Red (cleanup)
+5. Show approximate time for each step:
+   - init: ~30 seconds
+   - plan: ~10 seconds
+   - apply: 2-3 minutes
+   - verify: ~1 minute
+6. Add icons:
+   - Download icon for init
+   - Magnifying glass for plan
+   - Gear/settings for apply
+   - Checkmark for success
+   - Test tube for verify
+   - Trash can for destroy
